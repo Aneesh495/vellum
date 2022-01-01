@@ -1,0 +1,26 @@
+*.gem
+*.rbc
+/.config
+/coverage/
+/InstalledFiles
+/pkg/
+/spec/reports/
+/spec/examples.txt
+/test/tmp/
+/test/version_tmp/
+/tmp/
+
+# C extensions
+*.bundle
+*.so
+*.o
+*.a
+Makefile
+mkmf.log
+ext/vellum_native/*.o
+ext/vellum_native/*.bundle
+ext/vellum_native/*.so
+ext/vellum_native/Makefile
+
+.DS_Store
+.runtime/
