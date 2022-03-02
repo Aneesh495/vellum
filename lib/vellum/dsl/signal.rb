@@ -37,9 +37,22 @@ module Vellum
         Signal.new(@context, -@lc)
       end
 
-      # Non-linear multiplication creates an internal auxiliary wire and R1CS constraint
+      # Non-linear multiplication creates an internal auxiliary wire and R1CS constraint;
+      # scalar multiplication scales linear combinations directly without quadratic gates.
       def *(other)
+        if other.is_a?(Integer) || other.is_a?(Algebra::FieldElement)
+          return Signal.new(@context, @lc * other)
+        end
+
         o = coerce_signal(other)
+
+        # Check if either operand is a constant scalar
+        one_var = @context.r1cs.wire_allocator.one_variable
+        if o.lc.terms.length == 1 && o.lc.terms.key?(one_var)
+          return Signal.new(@context, @lc * o.lc.terms[one_var])
+        elsif @lc.terms.length == 1 && @lc.terms.key?(one_var)
+          return Signal.new(@context, o.lc * @lc.terms[one_var])
+        end
 
         # Allocate internal auxiliary signal for the product result
         aux_var = @context.r1cs.wire_allocator.allocate_internal("prod")

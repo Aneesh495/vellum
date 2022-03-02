@@ -11,6 +11,7 @@ module Vellum
       def self.build(field = Algebra::Fields::BN254Scalar.instance, &block)
         context = Context.new(field)
         context.instance_eval(&block)
+        context.finalize!
         CompiledCircuit.new(context)
       end
     end

@@ -1,5 +1,4 @@
-# frozen_string_literal: true
-
+require "securerandom"
 require_relative "field_element"
 
 module Vellum

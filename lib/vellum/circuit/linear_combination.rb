@@ -83,7 +83,7 @@ module Vellum
       def evaluate(witness)
         sum = @field.zero
         @terms.each do |var, coeff|
-          val = witness[var] || witness[var.id]
+          val = witness.is_a?(Array) ? witness[var.id] : (witness[var] || witness[var.id])
           raise SynthesisError, "Unassigned wire: #{var}" if val.nil?
 
           elem = val.is_a?(Algebra::FieldElement) ? val : @field.element(val)

@@ -53,7 +53,12 @@ module Vellum
 
       # Registers a runtime witness calculation hint for an internal wire
       def add_witness_hint(variable, &hint_block)
-        @witness_hints[variable.id] = hint_block
+        @witness_hints[variable] = hint_block
+      end
+
+      # Finalizes circuit construction by re-indexing wire allocation
+      def finalize!
+        @r1cs.wire_allocator.reindex!
       end
 
       # Asserts that two signals or expressions are equal: sig_a == sig_b
@@ -85,8 +90,8 @@ module Vellum
 
         # Hint for bit decomposition during witness generation
         bit_signals.each_with_index do |b_sig, i|
-          var_id = b_sig.lc.terms.keys.first.id
-          add_witness_hint(@r1cs.wire_allocator[var_id]) do |witness|
+          var = b_sig.lc.terms.keys.first
+          add_witness_hint(var) do |witness|
             val = s.lc.evaluate(witness).value
             (val >> i) & 1
           end
@@ -119,7 +124,8 @@ module Vellum
           raise SynthesisError, "Witness generation loop detected" if passes > max_passes
 
           progress = false
-          @witness_hints.each do |var_id, hint|
+          @witness_hints.each do |var, hint|
+            var_id = var.is_a?(Circuit::Variable) ? var.id : var
             next unless witness[var_id].nil?
 
             begin

@@ -16,7 +16,8 @@ module Vellum
       end
 
       def element(coeffs)
-        ExtensionElement.new(self, coeffs)
+        c = coeffs.is_a?(Array) ? coeffs : [coeffs]
+        ExtensionElement.new(self, c)
       end
 
       def zero
@@ -52,7 +53,8 @@ module Vellum
       def initialize(field, coeffs)
         @field = field
         bf = field.base_field
-        c = coeffs.map { |x| x.is_a?(FieldElement) || x.is_a?(ExtensionElement) ? x : bf.element(x) }
+        raw_coeffs = coeffs.is_a?(Array) ? coeffs : [coeffs]
+        c = raw_coeffs.map { |x| x.is_a?(FieldElement) || x.is_a?(ExtensionElement) ? x : bf.element(x) }
         # Pad or truncate to field degree
         @coeffs = c + Array.new([0, field.degree - c.length].max) { bf.zero }
         @coeffs = @coeffs[0...field.degree]
@@ -79,6 +81,10 @@ module Vellum
       end
 
       def *(other)
+        if other.is_a?(Integer) || other.is_a?(FieldElement)
+          return field.element(@coeffs.map { |c| c * other })
+        end
+
         o = coerce_element(other)
         # Degree-specific polynomial multiplication reduced modulo field.modulus_poly
         field.multiply(self, o)

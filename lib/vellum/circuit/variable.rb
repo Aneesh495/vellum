@@ -5,7 +5,8 @@ module Vellum
     # Represents a discrete wire in an arithmetic circuit.
     # Wires can represent public inputs, private witnesses, internal signals, or constants.
     class Variable
-      attr_reader :id, :name, :type
+      attr_accessor :id
+      attr_reader :name, :type
 
       TYPES = %i[constant public_input public_output private_witness internal].freeze
 
@@ -35,12 +36,15 @@ module Vellum
       alias inspect to_s
 
       def ==(other)
-        other.is_a?(Variable) && @id == other.id
+        equal?(other) || (other.is_a?(Variable) && @id == other.id)
       end
-      alias eql? ==
+
+      def eql?(other)
+        equal?(other)
+      end
 
       def hash
-        @id.hash
+        object_id.hash
       end
     end
   end

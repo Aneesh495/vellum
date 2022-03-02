@@ -56,6 +56,35 @@ module Vellum
         var
       end
 
+      # Re-indexes wires to enforce strict canonical ordering:
+      # Wire 0: ONE
+      # Wires 1..num_public: public inputs / outputs
+      # Wires (num_public + 1)...num_variables: private witness and internal auxiliary wires.
+      def reindex!
+        @one_variable.id = 0
+        new_vars = [@one_variable]
+        new_by_name = { ONE: @one_variable }
+
+        current_id = 1
+        @public_variables.each do |var|
+          var.id = current_id
+          new_vars << var
+          new_by_name[var.name] = var
+          current_id += 1
+        end
+
+        @private_variables.each do |var|
+          var.id = current_id
+          new_vars << var
+          new_by_name[var.name] = var
+          current_id += 1
+        end
+
+        @variables = new_vars
+        @by_name = new_by_name
+        self
+      end
+
       def [](name_or_id)
         if name_or_id.is_a?(Integer)
           @variables[name_or_id]
