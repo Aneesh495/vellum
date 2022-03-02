@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative "../lib/vellum"
+require_relative "../lib/vellum/cli/compile_command"
+require_relative "../lib/vellum/cli/inspect_command"
+require_relative "../lib/vellum/cli/export_command"
+require_relative "../lib/vellum/cli/bench_command"
+require_relative "../lib/vellum/cli/verify_all_command"
+
+BANNER = <<~BANNER
+  #{Vellum::TUI::ANSI.bold('Vellum')} - Zero-Knowledge Proof Engine (v#{Vellum::VERSION})
+
+  Usage: vellum <command> [options]
+
+  Commands:
+    compile <circuit.rb>      Compile circuit and output constraint topology
+    inspect <circuit.rb>      Interactive terminal circuit debugger and matrix view
+    export [options]          Export verifiers to Solidity, standalone Ruby, or C99
+    bench                     Run cryptographic benchmarks (MSM, NTT, Pairings, Poseidon)
+    verify-all                Run formal verification across Groth16, Plonk, and STARKs
+    version                   Print version information
+    help                      Show this help message
+BANNER
+
+command = ARGV.shift
+
+case command
+when "compile"
+  exit Vellum::CLI::CompileCommand.new(ARGV).execute
+when "inspect"
+  exit Vellum::CLI::InspectCommand.new(ARGV).execute
+when "export"
+  exit Vellum::CLI::ExportCommand.new(ARGV).execute
+when "bench"
+  exit Vellum::CLI::BenchCommand.new(ARGV).execute
+when "verify-all"
+  exit Vellum::CLI::VerifyAllCommand.new(ARGV).execute
+when "version", "-v", "--version"
+  puts "Vellum version #{Vellum::VERSION}"
+when "help", "-h", "--help", nil
+  puts BANNER
+else
+  warn "Unknown command: #{command}"
+  puts BANNER
+  exit 1
+end
