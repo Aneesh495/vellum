@@ -32,7 +32,7 @@ module Vellum
 
         # Generates public key A = sk * B
         def public_key(secret_key)
-          b = curve.generator
+          b = curve.base8
           b * secret_key
         end
 
@@ -41,7 +41,7 @@ module Vellum
           sk_val = secret_key.is_a?(Algebra::FieldElement) ? secret_key.value : secret_key.to_i
           m_val = message.is_a?(Algebra::FieldElement) ? message.value : message.to_i
           sub_order = curve.subgroup_order
-          b = curve.generator
+          b = curve.base8
 
           # 1. Deterministic nonce derivation via Poseidon
           r_scalar = Poseidon.hash([sk_val, m_val]).value % sub_order
@@ -68,7 +68,7 @@ module Vellum
         # Checks s * B == R + h * A
         def verify(public_key, message, signature)
           sub_order = curve.subgroup_order
-          b = curve.generator
+          b = curve.base8
           m_val = message.is_a?(Algebra::FieldElement) ? message.value : message.to_i
 
           rx = signature.r_point.to_affine.x.value

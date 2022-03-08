@@ -116,15 +116,15 @@ module Vellum
         a_param = @curve.a
         d_param = @curve.d
 
-        a = (@y - @x) * (other.y - other.x)
-        b = (@y + @x) * (other.y + other.x)
-        c = @t * (d_param * 2) * other.t
-        d = @z * 2 * other.z
+        a = @x * other.x
+        b = @y * other.y
+        c = @t * d_param * other.t
+        d = @z * other.z
 
-        e = b - a
+        e = ((@x + @y) * (other.x + other.y)) - a - b
         f = d - c
         g = d + c
-        h = b + (a * a_param)
+        h = b - (a * a_param)
 
         x3 = e * f
         y3 = g * h
