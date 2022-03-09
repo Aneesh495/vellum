@@ -25,6 +25,7 @@ module Vellum
         def self.generate(degree, tau, pairing_engine = Algebra::Pairing::BN254Pairing.instance)
           g1 = pairing_engine.g1.generator
           g2 = pairing_engine.g2.generator
+          order = pairing_engine.g1.order
 
           tau_val = tau.is_a?(Algebra::FieldElement) ? tau.value : tau.to_i
           curr_tau = 1
@@ -32,10 +33,10 @@ module Vellum
           g1_powers = []
           (degree + 1).times do
             g1_powers << (g1 * curr_tau)
-            curr_tau = (curr_tau * tau_val) % pairing_engine.fp.modulus
+            curr_tau = (curr_tau * tau_val) % order
           end
 
-          g2_powers = [g2, g2 * tau_val]
+          g2_powers = [g2, g2 * (tau_val % order)]
           new(g1_powers, g2_powers, pairing_engine)
         end
       end
@@ -49,6 +50,15 @@ module Vellum
           @z = z
           @y = y
           @witness = witness
+        end
+      end
+
+      class << self
+        # Setup helper generating a toxic SRS of given degree
+        def setup(degree, pairing_engine = Algebra::Pairing::BN254Pairing.instance, tau = nil)
+          order = pairing_engine.g1.order
+          t = tau || (SecureRandom.random_number(order - 2) + 2)
+          SRS.generate(degree, t, pairing_engine)
         end
       end
 

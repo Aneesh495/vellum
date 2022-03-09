@@ -11,7 +11,7 @@ module Vellum
     # with bilinear pairings in O(1) group operations.
     class Plonk
       class << self
-        def verify(proof, srs, domain, field = srs.pairing_engine.fp)
+        def verify(proof, srs, domain, field = srs.pairing_engine.fr)
           transcript = Crypto::FiatShamir.new("vellum-plonk")
 
           # Round 1

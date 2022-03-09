@@ -20,10 +20,12 @@ module Vellum
         # 6*u + 2 = 29793968203157093288
         LOOP_PARAMETER = (6 * BN_U) + 2
 
-        attr_reader :fp, :fp2, :fp6, :fp12, :g1, :g2
+        attr_reader :fp, :fp2, :fp6, :fp12, :g1, :g2, :fr
+        alias_method :scalar_field, :fr
 
         def initialize
           @fp = Fields::BN254Base.instance
+          @fr = Fields::BN254Scalar.instance
           @fp2 = Extensions::Fp2.new(@fp, -1)
           @fp6 = Extensions::Fp6.new(@fp2, :bn254)
           @fp12 = Extensions::Fp12.new(@fp6)

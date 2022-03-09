@@ -17,10 +17,12 @@ module Vellum
         # BLS parameter x = -0xd201000000010000
         BLS_X = -0xd201000000010000
 
-        attr_reader :fp, :fp2, :fp6, :fp12, :g1, :g2
+        attr_reader :fp, :fp2, :fp6, :fp12, :g1, :g2, :fr
+        alias_method :scalar_field, :fr
 
         def initialize
           @fp = Fields::BLS12381Base.instance
+          @fr = Fields::BLS12381Scalar.instance
           @fp2 = Extensions::Fp2.new(@fp, -1)
           @fp6 = Extensions::Fp6.new(@fp2, :bls12_381)
           @fp12 = Extensions::Fp12.new(@fp6)

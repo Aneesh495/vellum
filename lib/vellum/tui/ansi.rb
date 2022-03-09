@@ -43,34 +43,38 @@ module Vellum
       BOX_T_LEFT  = "┤"
       BOX_CROSS   = "┼"
 
-      class << self
-        def bold(text)
-          "#{BOLD}#{text}#{RESET}"
-        end
+      extend self
 
-        def green(text)
-          "#{GREEN}#{text}#{RESET}"
-        end
+      def bold(text)
+        "#{BOLD}#{text}#{RESET}"
+      end
 
-        def red(text)
-          "#{RED}#{text}#{RESET}"
-        end
+      def green(text)
+        "#{GREEN}#{text}#{RESET}"
+      end
 
-        def cyan(text)
-          "#{CYAN}#{text}#{RESET}"
-        end
+      def red(text)
+        "#{RED}#{text}#{RESET}"
+      end
 
-        def yellow(text)
-          "#{YELLOW}#{text}#{RESET}"
-        end
+      def cyan(text)
+        "#{CYAN}#{text}#{RESET}"
+      end
 
-        def magenta(text)
-          "#{MAGENTA}#{text}#{RESET}"
-        end
+      def yellow(text)
+        "#{YELLOW}#{text}#{RESET}"
+      end
 
-        def dim(text)
-          "#{DIM}#{text}#{RESET}"
-        end
+      def blue(text)
+        "#{BLUE}#{text}#{RESET}"
+      end
+
+      def magenta(text)
+        "#{MAGENTA}#{text}#{RESET}"
+      end
+
+      def dim(text)
+        "#{DIM}#{text}#{RESET}"
       end
     end
   end
