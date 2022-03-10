@@ -14,9 +14,8 @@ module Vellum
         # evaluations at [1, omega, omega^2, ..., omega^(n-1)].
         def forward(coeffs, domain)
           n = domain.size
-          raise ArgumentError, "Length must match domain size" unless coeffs.length == n
-
-          a = coeffs.dup
+          padded = coeffs + Array.new([0, n - coeffs.length].max) { domain.field.zero }
+          a = padded[0...n].dup
           bit_reverse!(a)
 
           # Cooley-Tukey Radix-2 butterfly network
@@ -46,9 +45,8 @@ module Vellum
         # Inverse NTT: converts evaluation vector back to polynomial coefficients.
         def inverse(evals, domain)
           n = domain.size
-          raise ArgumentError, "Length must match domain size" unless evals.length == n
-
-          a = evals.dup
+          padded = evals + Array.new([0, n - evals.length].max) { domain.field.zero }
+          a = padded[0...n].dup
           bit_reverse!(a)
 
           len = 2
