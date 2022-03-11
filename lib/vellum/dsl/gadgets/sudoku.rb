@@ -50,7 +50,37 @@ module Vellum
           # 5. Enforce public clues: if clue provided at (r, c), grid[r][c] == clue
           public_clues.each do |(r, c), clue_val|
             cell = grid_cells[r][c]
-            context.assert_equal(cell, Signal.new(context, clue_val), "clue_#{r}_#{c}")
+            target = clue_val.is_a?(Signal) ? clue_val : Signal.new(context, clue_val)
+            context.assert_equal(cell, target, "clue_#{r}_#{c}")
+          end
+        end
+
+        # Verifies 4x4 mini-sudoku grid (digits 1..4, 2x2 boxes)
+        def self.verify_mini_grid(context, grid_cells, public_clues = {})
+          expected_sum = 10
+          expected_prod = 24
+
+          4.times do |r|
+            row = grid_cells[r]
+            assert_permutation(context, row, expected_sum, expected_prod, "mini_row_#{r}")
+          end
+
+          4.times do |c|
+            col = Array.new(4) { |r| grid_cells[r][c] }
+            assert_permutation(context, col, expected_sum, expected_prod, "mini_col_#{c}")
+          end
+
+          [0, 2].each do |br|
+            [0, 2].each do |bc|
+              box = [grid_cells[br][bc], grid_cells[br][bc + 1], grid_cells[br + 1][bc], grid_cells[br + 1][bc + 1]]
+              assert_permutation(context, box, expected_sum, expected_prod, "mini_box_#{br}_#{bc}")
+            end
+          end
+
+          public_clues.each do |(r, c), clue_val|
+            cell = grid_cells[r][c]
+            target = clue_val.is_a?(Signal) ? clue_val : Signal.new(context, clue_val)
+            context.assert_equal(cell, target, "clue_#{r}_#{c}")
           end
         end
 
@@ -66,13 +96,15 @@ module Vellum
         end
 
         def self.assert_permutation_of_digits(context, cells, label)
-          # Sum constraint
-          sum = cells.reduce(Signal.new(context, 0)) { |acc, x| acc + x }
-          context.assert_equal(sum, Signal.new(context, EXPECTED_SUM), "#{label}_sum")
+          assert_permutation(context, cells, EXPECTED_SUM, EXPECTED_PROD, label)
+        end
 
-          # Product constraint
+        def self.assert_permutation(context, cells, exp_sum, exp_prod, label)
+          sum = cells.reduce(Signal.new(context, 0)) { |acc, x| acc + x }
+          context.assert_equal(sum, Signal.new(context, exp_sum), "#{label}_sum")
+
           prod = cells.reduce(Signal.new(context, 1)) { |acc, x| acc * x }
-          context.assert_equal(prod, Signal.new(context, EXPECTED_PROD), "#{label}_prod")
+          context.assert_equal(prod, Signal.new(context, exp_prod), "#{label}_prod")
         end
       end
     end
