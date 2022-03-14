@@ -127,6 +127,11 @@ module Vellum
         @coeffs[0].one? && @coeffs[1..].all?(&:zero?)
       end
 
+      def conjugate
+        field.respond_to?(:conjugate) ? field.conjugate(self) : self
+      end
+      alias frobenius conjugate
+
       def ==(other)
         return false unless other.is_a?(ExtensionElement) || other.is_a?(Integer) || other.is_a?(FieldElement)
 
