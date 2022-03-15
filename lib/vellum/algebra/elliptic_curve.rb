@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "point"
+require_relative "extension_field"
 
 module Vellum
   module Algebra
@@ -64,14 +65,16 @@ module Vellum
       def identity
         @identity
       end
+      alias infinity identity
 
       def point(x, y)
         EdwardsPoint.new(self, x, y)
       end
 
       def on_curve?(point)
-        x = point.x
-        y = point.y
+        aff = point.to_affine
+        x = aff.x
+        y = aff.y
         lhs = (@a * x * x) + (y * y)
         rhs = @field.one + (@d * x * x * y * y)
         lhs == rhs
@@ -91,6 +94,12 @@ module Vellum
         @z = z ? (z.is_a?(FieldElement) ? z : f.element(z)) : f.one
         @t = t ? (t.is_a?(FieldElement) ? t : f.element(t)) : (@x * @y * @z.inv)
       end
+
+      def infinity?
+        aff = to_affine
+        aff.x.zero? && aff.y.one?
+      end
+      alias identity? infinity?
 
       def to_affine
         return self if @z.one?
