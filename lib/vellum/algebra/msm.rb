@@ -10,7 +10,7 @@ module Vellum
         # Executes MSM using the best strategy for the problem dimensions
         def multi_scalar_mul(points, scalars)
           raise ArgumentError, "Length mismatch: #{points.length} points vs #{scalars.length} scalars" unless points.length == scalars.length
-          return points.first.curve.infinity if points.empty?
+          return nil if points.empty?
           return points.first * scalars.first if points.length == 1
 
           if points.length < 16
@@ -22,6 +22,7 @@ module Vellum
 
         # Naive multi-scalar multiplication
         def naive_msm(points, scalars)
+          return nil if points.empty?
           res = points.first.curve.infinity
           points.each_with_index do |p, i|
             s = scalars[i].is_a?(FieldElement) ? scalars[i].value : scalars[i].to_i
