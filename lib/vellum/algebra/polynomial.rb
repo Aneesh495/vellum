@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "field_element"
+require_relative "extension_field"
 
 module Vellum
   module Algebra
@@ -237,6 +238,14 @@ module Vellum
         z2.coeffs.each_with_index { |c, i| res[i + (2 * m)] += c }
 
         Polynomial.new(@field, res)
+      end
+
+      def self.interpolate(points, field = nil)
+        require_relative "interpolation"
+        xs = points.map { |x, _| x }
+        ys = points.map { |_, y| y }
+        f = field || xs.first.field
+        Interpolation.lagrange_interpolate(xs, ys, f)
       end
     end
   end
