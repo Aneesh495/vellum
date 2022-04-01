@@ -42,7 +42,7 @@ module Vellum
 
         # Padds trace table to next power of 2 and initializes evaluation domain
         def finalize!
-          n = [num_rows, 2].max
+          n = [@capacity, num_rows, 2].max
           @domain = Algebra::EvaluationDomain.new(@field, n)
           pad_len = @domain.size - num_rows
 
