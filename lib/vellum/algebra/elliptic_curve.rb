@@ -2,6 +2,7 @@
 
 require_relative "point"
 require_relative "extension_field"
+require_relative "prime_field"
 
 module Vellum
   module Algebra
@@ -16,6 +17,10 @@ module Vellum
         @order = order
         @cofactor = cofactor
         @infinity = Point.new(self, field.zero, field.one, field.zero, infinity: true)
+      end
+
+      def scalar_field
+        @scalar_field ||= @order ? PrimeField.new(@order) : nil
       end
 
       def infinity
