@@ -6,9 +6,9 @@ This document details the lifecycle of a verifiable computation in Vellum, from 
 +-------------------------------------------------------------------------+
 | Phase 1: Circuit Definition                                             |
 |   circuit = Vellum.circuit do                                           |
-|     x = allocate_private(:x)                                            |
-|     y = allocate_public(:y)                                             |
-|     constrain(x * x, y)                                                 |
+|     x = private_input(:x)                                               |
+|     y = public_input(:y)                                                |
+|     assert_equal(x * x, y)                                              |
 |   end                                                                   |
 +-------------------------------------------------------------------------+
                                      |

@@ -84,31 +84,24 @@ require "vellum"
 
 # Define a cubic relation circuit: x^3 + x + 5 == y
 circuit = Vellum.circuit do
-  x = allocate_private(:x)
-  y = allocate_public(:y)
+  x = private_input(:x)
+  y = public_input(:y)
 
-  x2 = allocate_intermediate(:x2)
-  x3 = allocate_intermediate(:x3)
+  x2 = x * x
+  x3 = x2 * x
+  result = x3 + x + 5
 
-  # x * x = x2
-  constrain(x * x, x2)
-  # x2 * x = x3
-  constrain(x2 * x, x3)
-  # x3 + x + 5 = y
-  constrain(x3 + x + 5, y)
+  assert_equal(result, y, "cubic_relation")
 end
 
 # 1. Generate Structured Reference String (SRS)
-pk, vk = Vellum::Prover::Groth16.setup(circuit)
+pk, vk = circuit.setup
 
-# 2. Assign witness values (private: x = 3, public: y = 35)
-witness = circuit.synthesize_witness(x: 3, y: 35)
+# 2. Assign witness values and prove (private: x = 3, public: y = 35)
+proof = circuit.prove(pk, x: 3, y: 35)
 
-# 3. Generate zero-knowledge proof
-proof = Vellum::Prover::Groth16.prove(pk, circuit, witness)
-
-# 4. Verify proof against public inputs
-is_valid = Vellum::Verifier::Groth16.verify(vk, [35], proof)
+# 3. Verify proof against public inputs
+is_valid = circuit.verify(vk, [35], proof)
 puts "Proof verification result: #{is_valid}" # => true
 ```
 

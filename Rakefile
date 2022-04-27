@@ -21,3 +21,8 @@ desc "Verify full proof systems"
 task :verify_all do
   ruby "bin/vellum", "verify-all"
 end
+
+desc "Run comprehensive empirical benchmark suite"
+task :benchmark_suite do
+  ruby "benchmarks/benchmark_suite.rb"
+end
