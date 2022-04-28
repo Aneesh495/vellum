@@ -26,3 +26,8 @@ desc "Run comprehensive empirical benchmark suite"
 task :benchmark_suite do
   ruby "benchmarks/benchmark_suite.rb"
 end
+
+desc "Execute and verify all end-to-end runnable examples"
+task :examples do
+  ruby "bin/verify-all-examples"
+end

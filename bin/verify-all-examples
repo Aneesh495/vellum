@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "fileutils"
+
+puts "=" * 70
+puts "  VELLUM: EXHAUSTIVE VERIFICATION OF RUNNABLE EXAMPLES"
+puts "=" * 70
+puts
+
+examples = Dir.glob(File.expand_path("../examples/[0-9]*.rb", __dir__)).sort
+
+passed = 0
+failed = 0
+
+examples.each_with_index do |ex, idx|
+  name = File.basename(ex)
+  print "[#{idx + 1}/#{examples.size}] Running #{name}... "
+  $stdout.flush
+
+  output = `ruby "#{ex}" 2>&1`
+  if $?.success?
+    puts "PASSED"
+    passed += 1
+  else
+    puts "FAILED"
+    puts "-" * 50
+    puts output
+    puts "-" * 50
+    failed += 1
+  end
+end
+
+puts
+puts "=" * 70
+puts "  RESULTS: #{passed} passed, #{failed} failed out of #{examples.size} examples"
+puts "=" * 70
+
+exit(failed == 0 ? 0 : 1)
