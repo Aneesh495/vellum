@@ -1,0 +1,18 @@
+PATH
+  remote: .
+  specs:
+    vellum (0.1.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  arm64-darwin-25
+  ruby
+
+DEPENDENCIES
+  vellum!
+
+BUNDLED WITH
+   2.5.3
